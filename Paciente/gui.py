@@ -1,19 +1,27 @@
 import tkinter as tk
-from Model.pacienteDAO import Persona, guardarDatosPersona
+import tkcalendar as tc
+from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk, Toplevel
+from Model.pacienteDAO import *
+from tkcalendar import *
+from tkcalendar import Calendar
+from datetime import datetime, date
 
 
 class Frame(tk.Frame):
 
     def __init__(self, root):
-        super().__init__(root)
+        super().__init__(root, width=1280, height=720)
         self.root = root
         self.config(bg='#CDD8FF')  # Establecer el color de fondo del frame principal
-        self.pack(fill='both', expand=True)  # Empaquetar el frame principal para que ocupe todo el espacio disponible
+        self.pack()  # Empaquetar el frame principal para que ocupe todo el espacio disponible
         self.labels() 
         self.buttons()
         self.entrys()
         self.idPersona = None
         self.deshabilitar_Entrys()
+        self.tablaPaciente()
 
     def labels(self):
         #LABELS
@@ -100,9 +108,16 @@ class Frame(tk.Frame):
         self.entryTelefono.config(width=50, font=('ARIAL',15))
         self.entryTelefono.grid(column=1, row=8, padx=10, pady=5, columnspan=2)
 
-         # Actualizar la geometría de la ventana para que se ajuste al contenido
-        self.update_idletasks()
-        self.root.geometry(f'{self.winfo_reqwidth()}x{self.winfo_reqheight()}')
+        #ENTRYS BUSCADOR
+        self.svBuscarDni = tk.StringVar()
+        self.entryBuscarDni = tk.Entry(self, textvariable=self.svBuscarDni)
+        self.entryBuscarDni.config(width=20, font=('ARIAL',15))
+        self.entryBuscarDni.grid(column=4, row=0, padx=10, pady=5, columnspan=2)
+
+        self.svBuscarApellido = tk.StringVar()
+        self.entryBuscarApellido = tk.Entry(self, textvariable=self.svBuscarApellido)
+        self.entryBuscarApellido.config(width=20, font=('ARIAL',15))
+        self.entryBuscarApellido.grid(column=4, row=1, padx=10, pady=5, columnspan=2)
 
     def buttons(self):
         
@@ -118,6 +133,56 @@ class Frame(tk.Frame):
         self.btnCancelar.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#B00000', cursor='hand2',activebackground='#D27C7C')
         self.btnCancelar.grid(column=2, row=9, padx=10, pady=5) 
 
+        #LABEL BUSCADOR
+        self.lblBuscarDni = tk.Label(self, text='Buscar DNI: ')
+        self.lblBuscarDni.config(font=('ARIAl',15,'bold'), bg='#CDD8FF')
+        self.lblBuscarDni.grid(column=3, row=0, padx=10, pady=5)
+
+        self.lblBuscarApellido = tk.Label(self, text='Buscar Apellido: ')
+        self.lblBuscarApellido.config(font=('ARIAl',15,'bold'), bg='#CDD8FF')
+        self.lblBuscarApellido.grid(column=3, row=1, padx=10, pady=5)
+
+        #BUTTON BUSCADOR
+        self.btnBuscarCondicion = tk.Button(self, text='Buscar', command = self.buscarCondicion)
+        self.btnBuscarCondicion.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#00396F', cursor='hand2',activebackground='#5B8DBD')
+        self.btnBuscarCondicion.grid(column=3,row=2, padx=10, pady=5, columnspan=1)
+
+        self.btnLimpiarBuscador = tk.Button(self, text='Limpiar', command = self.limpiarBuscador)
+        self.btnLimpiarBuscador.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#120061', cursor='hand2',activebackground='#7C6DC1')
+        self.btnLimpiarBuscador.grid(column=4,row=2, padx=10, pady=5, columnspan=1)
+
+        #BUTTON DE LA TABLA
+        self.btnEditarPaciente = tk.Button(self, text='Editar Paciente', command=self.editarPaciente)
+        self.btnEditarPaciente.config(width=20,font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#1E0075', activebackground='#9379E0', cursor='hand2')
+        self.btnEditarPaciente.grid(row=11, column=0, padx=10, pady=5)
+
+        self.btnEliminarPaciente = tk.Button(self, text='Eliminar Paciente', command=self.eliminarDatoPaciente )
+        self.btnEliminarPaciente.config(width=20,font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#8A0000', activebackground='#D58A8A', cursor='hand2')
+        self.btnEliminarPaciente.grid(row=11, column=1, padx=10, pady=5)
+
+        self.btnHistorialPaciente = tk.Button(self, text='Historial Paciente')
+        self.btnHistorialPaciente.config(width=20,font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#007C79', activebackground='#99F2F0', cursor='hand2')
+        self.btnHistorialPaciente.grid(row=11, column=2, padx=10, pady=5)
+
+        self.btnSalir = tk.Button(self, text='Salir', command=self.root.destroy)
+        self.btnSalir.config(width=20,font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#000000', activebackground='#5E5E5E', cursor='hand2')
+        self.btnSalir.grid(row=11, column=4, padx=10, pady=5)
+
+        self.btnCalendario = tk.Button(self, text='Calendario', command = self.vistaCalendario)
+        self.btnCalendario.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', bg='#53005B', cursor='hand2',activebackground='#C774CF')
+        self.btnCalendario.grid(column=3,row=3, padx=10, pady=5, columnspan=1)
+
+    def vistaCalendario(self):
+        self.topCalendario = Toplevel()
+        self.topCalendario.title("FECHA NACIMIENTO")
+        self.topCalendario.resizable(0,0)
+        #self.topCalendario.iconbitmap('img/clinica.ico')
+        self.topCalendario.config(bg='#CDD8FF')
+
+        self.svCalendario = StringVar()
+        self.calendar = tc.Calendar(self.topCalendario, selectmode='day', year=2015, month=1, day=1)
+        self.calendar.pack(pady=22)
+        self.calendar.grid(row=1, column = 0)
 
     def guardarPaciente(self):
         persona = Persona(
@@ -126,14 +191,30 @@ class Frame(tk.Frame):
             self.svCorreo.get(), self.svTelefono.get()
         )
 
-        #if self.idPersona == None:
-        guardarDatosPersona(persona)
-        #else:
-         #   guardarDatosPersona(persona, self.idPersona)
+        if self.idPersona == None:
+            guardarDatosPersona(persona)
+        else:
+            editarDatoPaciente(persona, self.idPersona)
     
         self.deshabilitar_Entrys()
+        self.tablaPaciente()
+
+    def buscarCondicion(self):
+        if len(self.svBuscarDni.get()) > 0 or len(self.svBuscarApellido.get()) > 0:
+            where = "WHERE 1=1"
+            if (len(self.svBuscarDni.get())) > 0:
+                #where = "WHERE dni = " + self.svBuscarDni.get() + ""  # En esta consulta se debe poner todo el dni
+                where = "WHERE dni LIKE '" + self.svBuscarDni.get()+"%' AND activo = 1"
+            if (len(self.svBuscarApellido.get())) > 0:
+                where = "WHERE apellidoPaterno LIKE '" + self.svBuscarApellido.get()+"%' AND activo = 1"
+            
+            self.tablaPaciente(where)
+        else:
+            self.tablaPaciente()
+
 
     def deshabilitar_Entrys(self):  
+        self.idPersona = None
         self.svNombre.set('')
         self.svApePaterno.set('')
         self.svApeMaterno.set('')
@@ -182,9 +263,165 @@ class Frame(tk.Frame):
 
         self.btnGuardar.config(state='normal')
         self.btnCancelar.config(state='normal') 
+
+    def editarPaciente(self):
+        try:
+            # Obtengo los datos
+            self.idPersona                  = self.tabla.item(self.tabla.selection())['text'] #Trae el ID
+            self.nombrePaciente             = self.tabla.item(self.tabla.selection())['values'][0]
+            self.apellidoPaternoPaciente    = self.tabla.item(self.tabla.selection())['values'][1]
+            self.apellidoMaternoPaciente    = self.tabla.item(self.tabla.selection())['values'][2]
+            self.dniPaciente                = self.tabla.item(self.tabla.selection())['values'][3]
+            self.fechaNacimientoPaciente    = self.tabla.item(self.tabla.selection())['values'][4]
+            self.edadPaciente               = self.tabla.item(self.tabla.selection())['values'][5]
+            self.antecedentesPaciente       = self.tabla.item(self.tabla.selection())['values'][6]
+            self.correoPaciente             = self.tabla.item(self.tabla.selection())['values'][7]
+            self.telefonoPaciente           = self.tabla.item(self.tabla.selection())['values'][8]
+
+            self.habilitar()
+
+            # Se agregan los datos obtenidos en el entry
+            self.entryNombre.insert(0, self.nombrePaciente)
+            self.entryApePaterno.insert(0, self.apellidoPaternoPaciente)
+            self.entryApeMaterno.insert(0, self.apellidoMaternoPaciente)
+            self.entryDni.insert(0, self.dniPaciente)
+            self.entryFecNacimiento.insert(0, self.fechaNacimientoPaciente)
+            self.entryEdad.insert(0,self.edadPaciente)
+            self.entryAntecedentes.insert(0,self.antecedentesPaciente)
+            self.entryCorreo.insert(0,self.correoPaciente)
+            self.entryTelefono.insert(0,self.telefonoPaciente)
+        except:
+            title = 'Editar Paciente'
+            mensaje = 'Error al editar paciente'
+            messagebox.showerror(title, mensaje)
+
+    def eliminarDatoPaciente(self):
+        try:
+            self.idPersona = self.tabla.item(self.tabla.selection())['text']
+            eliminarPaciente(self.idPersona)
+            
+            self.tablaPaciente()
+            self.idPersona = None
+        except:
+            title = 'Eliminar Paciente'
+            mensaje = 'No se pudo eliminar paciente'
+            messagebox.showinfo(title, mensaje)
+
+    def limpiarBuscador(self):
+        self.svBuscarApellido.set('')
+        self.svBuscarDni.set('')
+        self.tablaPaciente()
+
+    def tablaPaciente(self, where=""):
+
+        if len(where) > 0:
+            self.listaPersona = listarCondicion(where)
+        else:
+            self.listaPersona = listarPersonas()
+    
+
+        self.tabla = ttk.Treeview(self, column=('Nombre', 'APaterno', 'AMaterno','Dni','FNacimiento','Edad','Antecedentes','Correo','Telefono'))
+        self.tabla.grid(column=0, row=10, columnspan=10, sticky='nse')  
         
+        self.scroll = ttk.Scrollbar(self, orient='vertical', command=self.tabla.yview)
+        self.scroll.grid(row=10, column=11, sticky='nse')
 
+        self.tabla.configure(yscrollcommand=self.scroll.set)
+        self.tabla.tag_configure('evenrow', background='#C5EAFE')
 
+        self.tabla.heading('#0',text='ID')
+        self.tabla.heading('#1',text='Nombre')
+        self.tabla.heading('#2',text='Ap. Paterno')
+        self.tabla.heading('#3',text='Ap. Materno')
+        self.tabla.heading('#4',text='Dni')
+        self.tabla.heading('#5',text='F. Nacimiento')
+        self.tabla.heading('#6',text='Edad')
+        self.tabla.heading('#7',text='Antecedentes')
+        self.tabla.heading('#8',text='Correo')
+        self.tabla.heading('#9',text='Telefono')
+
+        self.tabla.column("#0", anchor=W, width=70)
+        self.tabla.column("#1", anchor=W, width=150)
+        self.tabla.column("#2", anchor=W, width=120)
+        self.tabla.column("#3", anchor=W, width=120)
+        self.tabla.column("#4", anchor=W, width=120)
+        self.tabla.column("#5", anchor=W, width=100)
+        self.tabla.column("#6", anchor=W, width=50)
+        self.tabla.column("#7", anchor=W, width=100)
+        self.tabla.column("#8", anchor=W, width=250)
+        self.tabla.column("#9", anchor=W, width=182)
+
+        for p in self.listaPersona:
+            self.tabla.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9]), tags=('evenrow',))
+
+    def historiaMedica(self):
+
+        try:
+            if self.idPersona == None:
+                self.idPersona = self.tabla.item(self.tabla.selection())['text']
+                self.idPersonaHistoria = self.tabla.item(self.tabla.selection())['text']
+            if (self.idPersona > 0):
+                idPersona = self.idPersona
+            
+            self.topHistoriaMedica = Toplevel()
+            self.topHistoriaMedica.title('HISTORIAL MEDICO')
+            self.topHistoriaMedica.resizable(0,0)
+            self.topHistoriaMedica.iconbitmap('img/clinica.ico')
+            self.topHistoriaMedica.config(bg='#CDD8FF')
+
+            #self.listaHistoria = listarHistoria(idPersona)
+            self.tablaHistoria = ttk.Treeview(self.topHistoriaMedica, column=('Apellidos','Fecha Historia', 'Motivo', 'Examen Auxiliar','Tratamiento', 'Detalle'))
+            self.tablaHistoria.grid(row=0, column=0, columnspan=7, sticky='nse')
+
+            self.scrollHistoria = ttk.Scrollbar(self.topHistoriaMedica, orient='vertical', command=self.tablaHistoria.yview)
+            self.scrollHistoria.grid(row=0, column=8, sticky='nse')
+            
+            self.tablaHistoria.configure(yscrollcommand=self.scrollHistoria.set)
+
+            self.tablaHistoria.heading('#0', text='ID')
+            self.tablaHistoria.heading('#1', text='Nombre y Apellidos')
+            self.tablaHistoria.heading('#2', text='Fecha y Hora')
+            self.tablaHistoria.heading('#3', text='Motivo')
+            self.tablaHistoria.heading('#4', text='Examen Auxiliar')
+            self.tablaHistoria.heading('#5', text='Tratamiento')
+            self.tablaHistoria.heading('#6', text='Detalle')
+
+            self.tablaHistoria.column('#0', anchor=W, width=50)
+            self.tablaHistoria.column('#1', anchor=W, width=150)
+            self.tablaHistoria.column('#2', anchor=W, width=100)
+            self.tablaHistoria.column('#3', anchor=W, width=120)
+            self.tablaHistoria.column('#4', anchor=W, width=250)
+            self.tablaHistoria.column('#5', anchor=W, width=200)
+            self.tablaHistoria.column('#6', anchor=W, width=450)
+
+            for p in self.listaHistoria:
+                self.tablaHistoria.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+
+            self.btnGuardarHistoria = tk.Button(self.topHistoriaMedica, text='Agregar Historia', command=self.topAgregarHistoria)
+            self.btnGuardarHistoria.config(width=20, font=('ARIAL', 12, 'bold'), fg='#DAD5D6', bg='#002771', cursor='hand2', activebackground='#7198E0')
+            self.btnGuardarHistoria.grid(row=2, column=0, padx=10, pady=5)
+
+            self.btnEditarHistoria = tk.Button(self.topHistoriaMedica, text='Editar Historia', command=self.topEditarHistorialMedico)
+            self.btnEditarHistoria.config(width=20, font=('ARIAL', 12, 'bold'), fg='#DAD5D6', bg='#3A005D', cursor='hand2', activebackground='#B47CD6')
+            self.btnEditarHistoria.grid(row=2, column=1, padx=10, pady=5)
+
+            self.btnEliminarHistoria = tk.Button(self.topHistoriaMedica, text='Eliminar Historia', command=self.eliminarHistorialMedico)
+            self.btnEliminarHistoria.config(width=20, font=('ARIAL', 12, 'bold'), fg='#DAD5D6', bg='#890011', cursor='hand2', activebackground='#DB939C')
+            self.btnEliminarHistoria.grid(row=2, column=2, padx=10, pady=5)
+
+            self.btnSalirHistoria = tk.Button(self.topHistoriaMedica, text='Salir', command=self.salirTop)
+            self.btnSalirHistoria.config(width=20, font=('ARIAL', 12, 'bold'), fg='#DAD5D6', bg='#000000', cursor='hand2', activebackground='#6F6F6F')
+            self.btnSalirHistoria.grid(row=2, column=6, padx=10, pady=5)
+
+            self.idPersona = None
+            
+        except:
+            title = 'Historia Medica'
+            mensaje = 'Error al mostrar historial'
+            messagebox.showerror(title, mensaje)
+            self.idPersona = None
+
+        
     
 
 

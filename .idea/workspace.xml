@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="549280f4-2a8d-4d6e-8088-48dd30c3a730" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Conexion/Conexion.py" beforeDir="false" afterPath="$PROJECT_DIR$/Conexion/Conexion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Model/pacienteDAO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/pacienteDAO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Paciente/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Paciente/gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/bd_historial_medico.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/bd_historial_medico.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/bd_historial_medico.sqbpro" beforeDir="false" afterPath="$PROJECT_DIR$/database/bd_historial_medico.sqbpro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,21 +37,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.Menu.executor": "Run",
-    "Python.gui.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Menu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gui.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -66,6 +70,7 @@
       <updated>1717017287570</updated>
       <workItem from="1717017288219" duration="5500000" />
       <workItem from="1717307398888" duration="4686000" />
+      <workItem from="1717612532026" duration="704000" />
     </task>
     <servers />
   </component>
