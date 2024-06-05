@@ -5,7 +5,7 @@ class ConexionBD:
         try:
             self.conn = sqlite3.connect('database/bd_historial_medico.db')
             self.cursor = self.conn.cursor()
-            #print("Conexión exitosa a la base de datos")
+            #ñprint("Conexión exitosa a la base de datos")
         except sqlite3.Error as e:
             print(f"Error al conectar a la base de datos: {e}")
 
